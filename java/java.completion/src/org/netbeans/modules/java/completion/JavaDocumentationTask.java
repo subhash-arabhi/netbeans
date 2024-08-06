@@ -73,7 +73,14 @@ public final class JavaDocumentationTask<T> extends BaseTask {
         } else {
             Env e = getCompletionEnvironment(controller, false);
             if (e != null) {
-                el = controller.getTrees().getElement(refinePath(e.getPath()));
+                TreePath tp = e.getPath();
+                el = controller.getTrees().getElement(refinePath(tp));
+                if(el != null && el.getKind() == ElementKind.CLASS){
+                    TreePath ptp = tp.getParentPath();
+                    if(ptp != null && ptp.getLeaf().getKind() == Tree.Kind.NEW_CLASS){
+                        el = controller.getTrees().getElement(refinePath(ptp));
+                    }
+                }
             }
         }
         if (!controller.getElementUtilities().isErroneous(el)) {
